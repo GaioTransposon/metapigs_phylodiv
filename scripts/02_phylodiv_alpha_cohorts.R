@@ -29,12 +29,12 @@ myfun_unrooted_stats <- function(my_df, my_dates) {
   
   # reorder
   x$Cohort.x <- factor(x$Cohort.x, 
-                        levels=c("Control", 
-                                 "D-Scour", 
-                                 "ColiGuard",
-                                 "Neomycin",
-                                 "Neomycin+D-Scour",
-                                 "Neomycin+ColiGuard"))
+                       levels=c("Control", 
+                                "D-Scour", 
+                                "ColiGuard",
+                                "Neomycin",
+                                "Neomycin+D-Scour",
+                                "Neomycin+ColiGuard"))
   
   res1 <- aov(diff ~ Cohort.x, data=x)
   res <- TukeyHSD(res1)
@@ -44,7 +44,7 @@ myfun_unrooted_stats <- function(my_df, my_dates) {
   aov.out$test <- "anova"
   aov.out$padj_method <- "TukeyHSD"
   aov.out$variable="unrooted_PD"
-
+  
   return(aov.out)
 }
 
@@ -60,12 +60,12 @@ myfun_bwpd_stats <- function(my_df, my_dates) {
   
   # reorder
   x$Cohort.x <- factor(x$Cohort.x, 
-                        levels=c("Control", 
-                                 "D-Scour", 
-                                 "ColiGuard",
-                                 "Neomycin",
-                                 "Neomycin+D-Scour",
-                                 "Neomycin+ColiGuard"))
+                       levels=c("Control", 
+                                "D-Scour", 
+                                "ColiGuard",
+                                "Neomycin",
+                                "Neomycin+D-Scour",
+                                "Neomycin+ColiGuard"))
   
   res1 <- aov(diff ~ Cohort.x, data=x)
   res <- TukeyHSD(res1)
@@ -103,12 +103,12 @@ myfun_unrooted_plot <- function(my_df) {
   
   # reorder
   x$Cohort.x <- factor(x$Cohort.x, 
-                        levels=c("Control", 
-                                 "D-Scour", 
-                                 "ColiGuard",
-                                 "Neomycin",
-                                 "Neomycin+D-Scour",
-                                 "Neomycin+ColiGuard"))
+                       levels=c("Control", 
+                                "D-Scour", 
+                                "ColiGuard",
+                                "Neomycin",
+                                "Neomycin+D-Scour",
+                                "Neomycin+ColiGuard"))
   
   cw_summary <- x %>% 
     distinct() %>%
@@ -116,7 +116,7 @@ myfun_unrooted_plot <- function(my_df) {
     tally()
   
   my_plot <- ggboxplot(x, x="Cohort.x", y="diff", fill = "Cohort.x", 
-                        ylab="unrooted_pd change (%)", legend = "none")+
+                       ylab="unrooted_pd change (%)", legend = "none")+
     My_Theme+
     geom_text(data = cw_summary,
               aes(Cohort.x, Inf, label = n), vjust="inward", size = your_font_size)+
@@ -137,12 +137,12 @@ myfun_bwpd_plot <- function(my_df) {
   
   # reorder
   x$Cohort.x <- factor(x$Cohort.x, 
-                           levels=c("Control", 
-                                    "D-Scour", 
-                                    "ColiGuard",
-                                    "Neomycin",
-                                    "Neomycin+D-Scour",
-                                    "Neomycin+ColiGuard"))
+                       levels=c("Control", 
+                                "D-Scour", 
+                                "ColiGuard",
+                                "Neomycin",
+                                "Neomycin+D-Scour",
+                                "Neomycin+ColiGuard"))
   
   cw_summary <- x %>% 
     distinct() %>%
@@ -161,12 +161,45 @@ myfun_bwpd_plot <- function(my_df) {
 
 ##############################################################################
 
+# remove pigs that were born on 2017-01-06 and 2017-01-07
+# so that max pigs diff in age is 3 days (2017-01-08 and 2017-01-11)
+
+
+# load details (cross_breed, line, bday, Sows)
+details <- read_excel(paste0(source_data, "pigTrial_GrowthWtsGE.hlsx.xlsx"),
+                      "Piglet details")
+
+# format details
+colnames(details)[colnames(details) == 'STIG'] <- 'pig'
+details$pig <- gsub("G","",details$pig)
+details$pig <- gsub("T","",details$pig)
+
+details <- details %>%
+  dplyr::select(pig,BIRTH_DAY)
+unique(details$BIRTH_DAY)
+
+keep <- details %>%
+  dplyr::filter(BIRTH_DAY > "2017-01-08 00:00:00") 
+unique(keep$BIRTH_DAY)
+NROW(keep)
+keep %>%
+  group_by(BIRTH_DAY) %>%
+  tally()
+keep_ID <- unique(keep$pig)
+
+boggo_selection <- boggo[boggo$isolation_source %in% keep_ID,]
+
+test <- boggo_selection %>%
+  group_by(Cohort, collection_date) %>%
+  tally()
+View(test)
+
 # subsetting
-piggies_t0 <- boggo %>% dplyr::filter(collection_date == "t0") 
-piggies_t2 <- boggo %>% dplyr::filter(collection_date == "t2") 
-piggies_t4 <- boggo %>% dplyr::filter(collection_date == "t4") 
-piggies_t6 <- boggo %>% dplyr::filter(collection_date == "t6") 
-piggies_t8 <- boggo %>% dplyr::filter(collection_date == "t8") 
+piggies_t0 <- boggo_selection %>% dplyr::filter(collection_date == "t0") 
+piggies_t2 <- boggo_selection %>% dplyr::filter(collection_date == "t2") 
+piggies_t4 <- boggo_selection %>% dplyr::filter(collection_date == "t4") 
+piggies_t6 <- boggo_selection %>% dplyr::filter(collection_date == "t6") 
+piggies_t8 <- boggo_selection %>% dplyr::filter(collection_date == "t8") 
 
 ###########################
 
@@ -202,20 +235,20 @@ myfun_bwpd_plot(df_t0_t8)
 
 # get and gather all stats: 
 alpha_deltas_cohorts <- rbind(myfun_unrooted_stats(df_t0_t2,"t0_t2"), 
-                            myfun_bwpd_stats(df_t0_t2,"t0_t2"),
-                            myfun_unrooted_stats(df_t2_t4,"t2_t4"), 
-                            myfun_bwpd_stats(df_t2_t4,"t2_t4"),
-                            myfun_unrooted_stats(df_t4_t6,"t4_t6"), 
-                            myfun_bwpd_stats(df_t4_t6,"t4_t6"),
-                            myfun_unrooted_stats(df_t6_t8,"t6_t8"), 
-                            myfun_bwpd_stats(df_t6_t8,"t6_t8"),
-                            myfun_unrooted_stats(df_t2_t6,"t2_t6"), 
-                            myfun_bwpd_stats(df_t2_t6,"t2_t6"),
-                            myfun_unrooted_stats(df_t4_t8,"t4_t8"), 
-                            myfun_bwpd_stats(df_t4_t8,"t4_t8"),
-                            myfun_unrooted_stats(df_t0_t8,"t0_t8"), 
-                            myfun_bwpd_stats(df_t0_t8,"t0_t8")
-                            )
+                              myfun_bwpd_stats(df_t0_t2,"t0_t2"),
+                              myfun_unrooted_stats(df_t2_t4,"t2_t4"), 
+                              myfun_bwpd_stats(df_t2_t4,"t2_t4"),
+                              myfun_unrooted_stats(df_t4_t6,"t4_t6"), 
+                              myfun_bwpd_stats(df_t4_t6,"t4_t6"),
+                              myfun_unrooted_stats(df_t6_t8,"t6_t8"), 
+                              myfun_bwpd_stats(df_t6_t8,"t6_t8"),
+                              myfun_unrooted_stats(df_t2_t6,"t2_t6"), 
+                              myfun_bwpd_stats(df_t2_t6,"t2_t6"),
+                              myfun_unrooted_stats(df_t4_t8,"t4_t8"), 
+                              myfun_bwpd_stats(df_t4_t8,"t4_t8"),
+                              myfun_unrooted_stats(df_t0_t8,"t0_t8"), 
+                              myfun_bwpd_stats(df_t0_t8,"t0_t8")
+)
 
 # # add data to workbook 
 # addWorksheet(wb, "alpha_deltas_cohorts")
@@ -231,18 +264,20 @@ stats_filtered_output <- alpha_deltas_cohorts %>% dplyr::filter(`p adj` <= 0.05)
                   comparison=="Control-D-Scour"|
                   comparison=="Control-ColiGuard")
 NROW(stats_filtered_output)
+
+
 ###########################
 
 # this is for extracting the legend only
 df_t0_t2 <- merge(piggies_t0,piggies_t2, by=c("isolation_source"))
 df_t0_t2$diff = ((df_t0_t2$bwpd.y-df_t0_t2$bwpd.x)/df_t0_t2$bwpd.y)*100
 df_t0_t2$Cohort.x <- factor(df_t0_t2$Cohort.x, 
-                      levels=c("Control", 
-                               "D-Scour", 
-                               "ColiGuard",
-                               "Neomycin",
-                               "Neomycin+D-Scour",
-                               "Neomycin+ColiGuard"))
+                            levels=c("Control", 
+                                     "D-Scour", 
+                                     "ColiGuard",
+                                     "Neomycin",
+                                     "Neomycin+D-Scour",
+                                     "Neomycin+ColiGuard"))
 for_legend_only <- ggboxplot(df_t0_t2, x = "Cohort.x", y = "diff", fill = "Cohort.x", 
                              legend = "right")+
   scale_color_manual(labels = c("Control", 
@@ -293,9 +328,9 @@ bottom_row = plot_grid(myfun_unrooted_plot(df_t2_t6),
                        labels=c("t2-t6","t4-t8","t0-t8",""),
                        label_size = 10)
 all_plots_unroo <- plot_grid(empty_space,
-                       top_row,
-                       bottom_row,
-                       nrow=3)
+                             top_row,
+                             bottom_row,
+                             nrow=3)
 
 
 #BWPD
@@ -316,9 +351,9 @@ bottom_row = plot_grid(myfun_bwpd_plot(df_t2_t6),
                        labels=c("t2-t6","t4-t8","t0-t8",""),
                        label_size = 10)
 all_plots_bwpd <- plot_grid(empty_space,
-                             top_row,
-                             bottom_row,
-                             nrow=3)
+                            top_row,
+                            bottom_row,
+                            nrow=3)
 
 pdf(paste0(out_dir,"alpha_deltas_by_cohort.pdf"))
 ggdraw() +
@@ -328,5 +363,5 @@ ggdraw() +
   draw_image(timeline, x = 0, y = 0.33) +
   draw_plot(all_plots_bwpd)
 dev.off()
-                    
+
 

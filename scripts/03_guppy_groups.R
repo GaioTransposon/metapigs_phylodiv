@@ -99,8 +99,7 @@ details$isolation_source <- gsub("T","",details$isolation_source)
 details <- details %>%
   dplyr::select(isolation_source,BIRTH_DAY,breed)
 
-
-###########################################################################################
+##########################################################################################
 ###########################################################################################
 
 
@@ -634,5 +633,379 @@ writeLines(unlist(f), paste0(out_dir,"guppy_input/piggies_CTRLC_t9_sel.txt"), se
 ###########################################################################################
 
 
+# ADDITIONAL ANALYSIS: COHORT/TREATMENT GROUPS EXCLUDING PIGS > 3 DAYS BDAY APART
 
+details <- details %>%
+  dplyr::select(isolation_source,BIRTH_DAY)
+unique(details$BIRTH_DAY)
+
+keep <- details %>%
+  dplyr::filter(BIRTH_DAY > "2017-01-08 00:00:00") 
+unique(keep$BIRTH_DAY)
+NROW(keep)
+keep %>%
+  group_by(BIRTH_DAY) %>%
+  tally()
+keep_ID <- unique(keep$isolation_source)
+
+
+mdat <- mdat[mdat$isolation_source %in% keep_ID,]
+
+###########################################################################################
+###########################################################################################
+
+
+#  PIGGIES : CTRL and NEO ; groups by collection date 
+
+# filter to keep piggies samples only 
+mdat_sel <- mdat %>% 
+  filter(Cohort=="Control"|Cohort=="Neomycin") %>%
+  dplyr::select(isolation_source,Cohort,DNA_plate,DNA_well,collection_date)
+
+mdat_sel$ID <- paste0(mdat_sel$DNA_plate,"_",mdat_sel$DNA_well,"_*")
+
+# groups by date 
+
+mdat_t0 <- mdat_sel %>% 
+  dplyr::filter(collection_date == "t0")
+
+mdat_t2 <- mdat_sel %>% 
+  dplyr::filter(collection_date == "t2")
+
+mdat_t4 <- mdat_sel %>% 
+  dplyr::filter(collection_date == "t4")
+
+mdat_t6 <- mdat_sel %>% 
+  dplyr::filter(collection_date == "t6")
+
+mdat_t8 <- mdat_sel %>% 
+  dplyr::filter(collection_date == "t8")
+
+mdat_t9 <- mdat_sel %>% 
+  dplyr::filter(collection_date == "t9")
+
+a <- as.character(mdat_t0$ID)
+b <- as.character(mdat_t2$ID)
+c <- as.character(mdat_t4$ID)
+d <- as.character(mdat_t6$ID)
+e <- as.character(mdat_t8$ID)
+f <- as.character(mdat_t9$ID)
+
+writeLines(unlist(a), paste0(out_dir,"guppy_input/piggies_CTRLNEO_t0_sel_bdays.txt"), sep = " ")
+writeLines(unlist(b), paste0(out_dir,"guppy_input/piggies_CTRLNEO_t2_sel_bdays.txt"), sep = " ")
+writeLines(unlist(c), paste0(out_dir,"guppy_input/piggies_CTRLNEO_t4_sel_bdays.txt"), sep = " ")
+writeLines(unlist(d), paste0(out_dir,"guppy_input/piggies_CTRLNEO_t6_sel_bdays.txt"), sep = " ")
+writeLines(unlist(e), paste0(out_dir,"guppy_input/piggies_CTRLNEO_t8_sel_bdays.txt"), sep = " ")
+writeLines(unlist(f), paste0(out_dir,"guppy_input/piggies_CTRLNEO_t9_sel_bdays.txt"), sep = " ")
+
+
+###########################################################################################
+###########################################################################################
+
+
+#  PIGGIES : NEO and NEO+D ; groups by collection date 
+
+# filter to keep piggies samples only 
+mdat_sel <- mdat %>% 
+  filter(Cohort=="Neomycin"|Cohort=="Neomycin+D-scour") %>%
+  dplyr::select(isolation_source,Cohort,DNA_plate,DNA_well,collection_date)
+
+mdat_sel$ID <- paste0(mdat_sel$DNA_plate,"_",mdat_sel$DNA_well,"_*")
+
+# groups by date 
+
+mdat_t0 <- mdat_sel %>% 
+  dplyr::filter(collection_date == "t0")
+
+mdat_t2 <- mdat_sel %>% 
+  dplyr::filter(collection_date == "t2")
+
+mdat_t4 <- mdat_sel %>% 
+  dplyr::filter(collection_date == "t4")
+
+mdat_t6 <- mdat_sel %>% 
+  dplyr::filter(collection_date == "t6")
+
+mdat_t8 <- mdat_sel %>% 
+  dplyr::filter(collection_date == "t8")
+
+mdat_t9 <- mdat_sel %>% 
+  dplyr::filter(collection_date == "t9")
+
+a <- as.character(mdat_t0$ID)
+b <- as.character(mdat_t2$ID)
+c <- as.character(mdat_t4$ID)
+d <- as.character(mdat_t6$ID)
+e <- as.character(mdat_t8$ID)
+f <- as.character(mdat_t9$ID)
+
+writeLines(unlist(a), paste0(out_dir,"guppy_input/piggies_NEONEOD_t0_sel_bdays.txt"), sep = " ")
+writeLines(unlist(b), paste0(out_dir,"guppy_input/piggies_NEONEOD_t2_sel_bdays.txt"), sep = " ")
+writeLines(unlist(c), paste0(out_dir,"guppy_input/piggies_NEONEOD_t4_sel_bdays.txt"), sep = " ")
+writeLines(unlist(d), paste0(out_dir,"guppy_input/piggies_NEONEOD_t6_sel_bdays.txt"), sep = " ")
+writeLines(unlist(e), paste0(out_dir,"guppy_input/piggies_NEONEOD_t8_sel_bdays.txt"), sep = " ")
+writeLines(unlist(f), paste0(out_dir,"guppy_input/piggies_NEONEOD_t9_sel_bdays.txt"), sep = " ")
+
+
+###########################################################################################
+###########################################################################################
+
+
+#  PIGGIES : NEO and NEO+C ; groups by collection date 
+
+# filter to keep piggies samples only 
+mdat_sel <- mdat %>% 
+  filter(Cohort=="Neomycin"|Cohort=="Neomycin+ColiGuard") %>%
+  dplyr::select(isolation_source,Cohort,DNA_plate,DNA_well,collection_date)
+
+mdat_sel$ID <- paste0(mdat_sel$DNA_plate,"_",mdat_sel$DNA_well,"_*")
+
+# groups by date 
+
+mdat_t0 <- mdat_sel %>% 
+  dplyr::filter(collection_date == "t0")
+
+mdat_t2 <- mdat_sel %>% 
+  dplyr::filter(collection_date == "t2")
+
+mdat_t4 <- mdat_sel %>% 
+  dplyr::filter(collection_date == "t4")
+
+mdat_t6 <- mdat_sel %>% 
+  dplyr::filter(collection_date == "t6")
+
+mdat_t8 <- mdat_sel %>% 
+  dplyr::filter(collection_date == "t8")
+
+mdat_t9 <- mdat_sel %>% 
+  dplyr::filter(collection_date == "t9")
+
+a <- as.character(mdat_t0$ID)
+b <- as.character(mdat_t2$ID)
+c <- as.character(mdat_t4$ID)
+d <- as.character(mdat_t6$ID)
+e <- as.character(mdat_t8$ID)
+f <- as.character(mdat_t9$ID)
+
+writeLines(unlist(a), paste0(out_dir,"guppy_input/piggies_NEONEOC_t0_sel_bdays.txt"), sep = " ")
+writeLines(unlist(b), paste0(out_dir,"guppy_input/piggies_NEONEOC_t2_sel_bdays.txt"), sep = " ")
+writeLines(unlist(c), paste0(out_dir,"guppy_input/piggies_NEONEOC_t4_sel_bdays.txt"), sep = " ")
+writeLines(unlist(d), paste0(out_dir,"guppy_input/piggies_NEONEOC_t6_sel_bdays.txt"), sep = " ")
+writeLines(unlist(e), paste0(out_dir,"guppy_input/piggies_NEONEOC_t8_sel_bdays.txt"), sep = " ")
+writeLines(unlist(f), paste0(out_dir,"guppy_input/piggies_NEONEOC_t9_sel_bdays.txt"), sep = " ")
+
+
+###########################################################################################
+###########################################################################################
+
+
+#  PIGGIES : CTRL and Ds ; groups by collection date 
+
+# filter to keep piggies samples only 
+mdat_sel <- mdat %>% 
+  filter(Cohort=="Control"|Cohort=="D-scour") %>%
+  dplyr::select(isolation_source,Cohort,DNA_plate,DNA_well,collection_date)
+
+mdat_sel$ID <- paste0(mdat_sel$DNA_plate,"_",mdat_sel$DNA_well,"_*")
+
+# groups by date 
+
+mdat_t0 <- mdat_sel %>% 
+  dplyr::filter(collection_date == "t0")
+
+mdat_t2 <- mdat_sel %>% 
+  dplyr::filter(collection_date == "t2")
+
+mdat_t4 <- mdat_sel %>% 
+  dplyr::filter(collection_date == "t4")
+
+mdat_t6 <- mdat_sel %>% 
+  dplyr::filter(collection_date == "t6")
+
+mdat_t8 <- mdat_sel %>% 
+  dplyr::filter(collection_date == "t8")
+
+mdat_t9 <- mdat_sel %>% 
+  dplyr::filter(collection_date == "t9")
+
+a <- as.character(mdat_t0$ID)
+b <- as.character(mdat_t2$ID)
+c <- as.character(mdat_t4$ID)
+d <- as.character(mdat_t6$ID)
+e <- as.character(mdat_t8$ID)
+f <- as.character(mdat_t9$ID)
+
+writeLines(unlist(a), paste0(out_dir,"guppy_input/piggies_CTRLDs_t0_sel_bdays.txt"), sep = " ")
+writeLines(unlist(b), paste0(out_dir,"guppy_input/piggies_CTRLDs_t2_sel_bdays.txt"), sep = " ")
+writeLines(unlist(c), paste0(out_dir,"guppy_input/piggies_CTRLDs_t4_sel_bdays.txt"), sep = " ")
+writeLines(unlist(d), paste0(out_dir,"guppy_input/piggies_CTRLDs_t6_sel_bdays.txt"), sep = " ")
+writeLines(unlist(e), paste0(out_dir,"guppy_input/piggies_CTRLDs_t8_sel_bdays.txt"), sep = " ")
+writeLines(unlist(f), paste0(out_dir,"guppy_input/piggies_CTRLDs_t9_sel_bdays.txt"), sep = " ")
+
+
+###########################################################################################
+###########################################################################################
+
+
+#  PIGGIES : CTRL and Co ; groups by collection date 
+
+# filter to keep piggies samples only 
+mdat_sel <- mdat %>% 
+  filter(Cohort=="Control"|Cohort=="ColiGuard") %>%
+  dplyr::select(isolation_source,Cohort,DNA_plate,DNA_well,collection_date)
+
+mdat_sel$ID <- paste0(mdat_sel$DNA_plate,"_",mdat_sel$DNA_well,"_*")
+
+# groups by date 
+
+mdat_t0 <- mdat_sel %>% 
+  dplyr::filter(collection_date == "t0")
+
+mdat_t2 <- mdat_sel %>% 
+  dplyr::filter(collection_date == "t2")
+
+mdat_t4 <- mdat_sel %>% 
+  dplyr::filter(collection_date == "t4")
+
+mdat_t6 <- mdat_sel %>% 
+  dplyr::filter(collection_date == "t6")
+
+mdat_t8 <- mdat_sel %>% 
+  dplyr::filter(collection_date == "t8")
+
+mdat_t9 <- mdat_sel %>% 
+  dplyr::filter(collection_date == "t9")
+
+a <- as.character(mdat_t0$ID)
+b <- as.character(mdat_t2$ID)
+c <- as.character(mdat_t4$ID)
+d <- as.character(mdat_t6$ID)
+e <- as.character(mdat_t8$ID)
+f <- as.character(mdat_t9$ID)
+
+writeLines(unlist(a), paste0(out_dir,"guppy_input/piggies_CTRLC_t0_sel_bdays.txt"), sep = " ")
+writeLines(unlist(b), paste0(out_dir,"guppy_input/piggies_CTRLC_t2_sel_bdays.txt"), sep = " ")
+writeLines(unlist(c), paste0(out_dir,"guppy_input/piggies_CTRLC_t4_sel_bdays.txt"), sep = " ")
+writeLines(unlist(d), paste0(out_dir,"guppy_input/piggies_CTRLC_t6_sel_bdays.txt"), sep = " ")
+writeLines(unlist(e), paste0(out_dir,"guppy_input/piggies_CTRLC_t8_sel_bdays.txt"), sep = " ")
+writeLines(unlist(f), paste0(out_dir,"guppy_input/piggies_CTRLC_t9_sel_bdays.txt"), sep = " ")
+
+
+###########################################################################################
+###########################################################################################
+
+
+# these are going to guppy: 
+
+# 1 piggies_sel.txt
+# 1 pos_controls_sel.txt
+# 6 piggies_*.txt
+# 6 piggies_group_A_*.txt
+# 6 piggies_group_B_*.txt
+# 12 piggies_CTRLNEO_*.txt  --> 6 including all, 6 excluding bdays > 3 days apart 
+# 12 piggies_NEONEOD_*.txt  --> 6 including all, 6 excluding bdays > 3 days apart 
+# 12 piggies_NEONEOC_*.txt  --> 6 including all, 6 excluding bdays > 3 days apart 
+# 12 piggies_CTRLDs_*.txt   --> 6 including all, 6 excluding bdays > 3 days apart 
+# 12 piggies_CTRLC_*.txt    --> 6 including all, 6 excluding bdays > 3 days apart 
+
+###########################################################################################
+###########################################################################################
+
+
+# NEXT: 
+
+# move all the *_sel.txt files on to HPC here /shared/homes/s1/pig_microbiome/phy_10M_202109/guppy_groups/
+# and also to /shared/homes/s1/pig_microbiome/phy_10M/guppy_groups/
+
+# necessary input files in the sample directory: 
+# all the .jplace files are 960 :
+# (base) phylosift_metapigs_20200225/$ ls *.jplace | wc -l
+# 960
+
+
+# script to run: 
+
+# nano run_guppy.sh
+
+# ```
+# #!/bin/bash
+# #PBS -l ncpus=10
+# #PBS -l walltime=120:00:00
+# #PBS -l mem=70g
+# #PBS -N run_guppy.sh
+# #PBS -M daniela.gaio@uts.edu.au
+# 
+# cd /shared/homes/s1/pig_microbiome/phy_10M/PS_temp
+# 
+# # compute per-sample alpha diversity with various diversity metrics
+# /shared/homes/s1/pig_microbiome/phylosift_v1.0.1/bin/guppy fpd plate_*.fastq.gz/* > all.alphadiv
+# 
+# # cluster the samples: performs squash clustering - NOT RUN
+# # /shared/homes/s1/pig_microbiome/phylosift_v1.0.1/bin/guppy squash plate_*.fastq.gz/*jplace
+# 
+# # edge PCA to explore variation in community composition among samples: performs edge principal components
+# /shared/homes/s1/pig_microbiome/phylosift_v1.0.1/bin/guppy epca --prefix pca_all plate_*.fastq.gz/*jplace
+# 
+# # run guppy fat: makes trees with edges fattened in proportion to the number of reads
+# /shared/homes/s1/pig_microbiome/phylosift_v1.0.1/bin/guppy fat --prefix fat_ plate_*.fastq.gz/*jplace
+# ```
+# works! 
+
+# guppy by group: 
+# $ cat run_guppy_bygroup.sh
+# #!/bin/bash
+# #PBS -l ncpus=20
+# #PBS -l walltime=120:00:00
+# #PBS -l mem=100g
+# #PBS -N run_guppy_bygroup.sh
+# #PBS -M daniela.gaio@student.uts.edu.au
+# 
+# 
+# cd /shared/homes/s1/pig_microbiome/phy_10M/PS_temp
+# 
+# 
+# # edge PCA to explore variation in community composition among samples - by group
+# for f in /shared/homes/s1/pig_microbiome/phy_10M/guppy_groups/*.txt # or: /shared/homes/12705859/phylosift_metapigs_20200225/*.txt
+# do N=$(basename $f)
+# #cat ../guppy_groups/$N
+# /shared/homes/s1/pig_microbiome/phylosift_v1.0.1/bin/guppy epca --prefix pca_$N `cat ../guppy_groups/$N`
+# done
+# 
+# 
+# # run guppy fat - by group
+# for f in /shared/homes/s1/pig_microbiome/phy_10M/guppy_groups/*.txt # or: /shared/homes/12705859/phylosift_metapigs_20200225/*.txt
+# do N=$(basename $f)
+# #cat ../guppy_groups/$N
+# /shared/homes/s1/pig_microbiome/phylosift_v1.0.1/bin/guppy fat --prefix fat_$N `cat ../guppy_groups/$N`
+# done
+
+
+###########################################################################################
+###########################################################################################
+
+
+# NEW ANALYSIS BY TREATMENT/COHORT: EXCLUDES PIGS BORN > 3 DAYS APART (PERFORMED ON 20211207)
+
+# cd /shared/homes/s1/pig_microbiome/phy_10M/PS_temp
+# 
+# 
+# # edge PCA to explore variation in community composition among samples - by group
+# for f in /shared/homes/s1/pig_microbiome/phy_10M/guppy_groups/piggies_*_t*_sel_bdays.txt 
+# do N=$(basename $f)
+# #cat ../guppy_groups/$N
+# /shared/homes/s1/pig_microbiome/phylosift_v1.0.1/bin/guppy epca --prefix pca_$N `cat ../guppy_groups/$N`
+# done
+# 
+
+###########################################################################################
+###########################################################################################
+
+
+# output files are: (extensions .xml, .edgediff, .trans, .jplace)
+# move all the *_sel.txt.jplace and all the *_sel.txt.xml files to local machine ~/Desktop/metapigs_phylodiv/phylosift/guppy/guppy_output
+# NEW as of 20211207: move all the *_sel_bdays.txt.jplace and all the *_sel_bdays.txt.xml files to local machine ~/Desktop/metapigs_phylodiv/phylosift/guppy/guppy_output
+# .xml files will be processed  with guppy_XML_process.R 
+
+###########################################################################################
+###########################################################################################
 
