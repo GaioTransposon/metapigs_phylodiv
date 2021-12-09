@@ -192,7 +192,6 @@ boggo_selection <- boggo[boggo$isolation_source %in% keep_ID,]
 test <- boggo_selection %>%
   group_by(Cohort, collection_date) %>%
   tally()
-View(test)
 
 # subsetting
 piggies_t0 <- boggo_selection %>% dplyr::filter(collection_date == "t0") 

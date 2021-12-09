@@ -1,4 +1,37 @@
 
+library(readr)
+library(dplyr)
+library(readxl)
+library(splitstackshape)
+library(data.table)
+
+#install.packages("robCompositions")
+#library(robCompositions)
+
+library(tidyr)
+library(tidyverse)
+library(ggbiplot)
+library(magrittr)
+library(ggpubr)
+library(grDevices)
+
+#install.packages("colorRamps")
+library(colorRamps)
+
+library(EnvStats)
+
+#install.packages("corrplot")
+library(corrplot)
+
+library(grid)
+library(cowplot)
+
+#install.packages("factoextra")
+library(factoextra)
+
+library(broom)
+library(openxlsx)
+
 library(magick)
 
 
@@ -83,11 +116,25 @@ details <- details %>%
   dplyr::select(pig,BIRTH_DAY,LINE,breed,stig,nurse)
 
 
+keep <- details %>%
+  dplyr::filter(BIRTH_DAY > "2017-01-08 00:00:00") 
+unique(keep$BIRTH_DAY)
+NROW(keep)
+keep %>%
+  group_by(BIRTH_DAY) %>%
+  tally()
+keep_ID <- unique(keep$pig)
+
+
 weights$pig <- as.character(weights$pig)
 
 df <- inner_join(weights,mdat)
 df <- inner_join(df,details)
-df
+head(df)
+NROW(df)
+
+df <- df[df$pig %in% keep_ID,]
+
 
 df_weight <- df
 
@@ -349,6 +396,10 @@ weight_BIRTH_stats <- rbind(myfun_weight_BIRTH_stats(df_t0_t2,"t0_t2"),
                              myfun_weight_BIRTH_stats(df_t0_t8,"t0_t8")
 )
 
+details %>%
+  group_by(breed,BIRTH_DAY) %>%
+  tally()
+  
 ############
 
 # convert rownames to first column
@@ -376,9 +427,9 @@ weight_BIRTH_stats <- setDT(weight_BIRTH_stats, keep.rownames = TRUE)[]
 stats_filtered_output <- weight_cohort_stats %>% dplyr::filter(`p adj` <= 0.05) %>%
   dplyr::filter(comparison=="Neomycin+D-Scour-Neomycin"| 
                   comparison=="Neomycin+ColiGuard-Neomycin"|
-                  comparison=="Control-Neomycin"|
-                  comparison=="Control-D-Scour"|
-                  comparison=="Control-ColiGuard")
+                  comparison=="Neomycin-Control"|
+                  comparison=="D-Scour-Control"|
+                  comparison=="ColiGuard-Control")
 
 ###########################
 

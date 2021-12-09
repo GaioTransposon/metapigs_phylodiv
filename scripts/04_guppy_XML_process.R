@@ -23,6 +23,13 @@
 #do java -cp ~/forester_1050.jar org.forester.application.phyloxml_converter -f=dummy "$fpath" "$(basename "$fpath").txt"
 #done
 
+# OR: do it in a loop, in local machine: (done for new groups as of 20211207)
+# cd ~/Desktop/metapigs_phylodiv/phylosift/guppy/guppy_output
+#for fpath in  ~/Desktop/metapigs_phylodiv/phylosift/guppy/guppy_output/pca_piggies_*_t*_sel_bdays.txt.xml
+#do java -cp ~/Downloads/phylosift_v1.0.1/bin/forester.jar org.forester.application.phyloxml_converter -f=dummy "$fpath" "$(basename "$fpath").txt"
+#done
+
+
 # move content of forester_out to local /Users/danielagaio//Desktop/metapigs_phylodiv/phylosift/guppy/guppy_output
 
 # note: forester.jar on local machine is here: /Users/danielagaio/Downloads/phylosift_v1.0.1/bin
@@ -75,11 +82,7 @@ complete.df <- data.frame(
 
 my.files = list.files(guppyout_dir,pattern=".txt.xml.txt")
 NROW(my.files)
-# expected: n=50
-
-# extract pca ones
-#my.files <- my.files[-17] # removing problematic file (won't parse - it's Ja31 anyway) # not an issue anymore 20210812
-#my.files <- my.files[-26] # removing problematic file (won't parse - it's Ja31 anyway) # not an issue anymore 20210812
+# these were 50 before adding 30 of the new (20211207) analysis ; now n=80
 
 for (textfile in my.files) {
   
@@ -168,19 +171,22 @@ for (textfile in my.files) {
 
 complete <- complete.df
 
-#unique(jplace_df$file)
 unique(complete$file)
 
 
 # clean file name & parse file name 
+complete$file <- gsub('_sel_bdays.txt.xml.txt', '_bdays', complete$file)
 complete$file <- gsub('_sel.txt.xml.txt', '', complete$file)
+
 complete$file <- gsub('pca_piggies_group_A', 'groupA', complete$file)
 complete$file <- gsub('pca_piggies_group_B', 'groupB', complete$file)
+
 complete$file <- gsub('pca_piggies_CTRLNEO', 'groupC', complete$file)
 complete$file <- gsub('pca_piggies_NEONEOD', 'groupD', complete$file)
 complete$file <- gsub('pca_piggies_NEONEOC', 'groupE', complete$file)
 complete$file <- gsub('pca_piggies_CTRLDs', 'groupF', complete$file)
 complete$file <- gsub('pca_piggies_CTRLC', 'groupG', complete$file)
+
 complete$file <- gsub('pca_piggies', 'all', complete$file)
 complete$file <- gsub('pca_pos_controls', 'pos_tNONE', complete$file)
 complete$file <- gsub('^all$', 'all_tALL', complete$file)
@@ -190,12 +196,19 @@ unique(complete$file)
 
 complete <- cSplit(complete, "file","_")
 
+complete$file_1 <- paste0(complete$file_3,"_",complete$file_1)
+complete$file_1 <- gsub('NA', '', complete$file_1)
+complete$file_1 <- gsub('^_', '', complete$file_1)
+
 colnames(complete)[colnames(complete) == 'file_1'] <- 'sample_type'
 colnames(complete)[colnames(complete) == 'file_2'] <- 'guppied_date'
+
+complete$sample_type <- gsub('bdays_', 'BDAYS', complete$sample_type)
 
 NROW(complete)
 unique(complete$sample_type)
 unique(complete$guppied_date)
+
 
 ###############
 

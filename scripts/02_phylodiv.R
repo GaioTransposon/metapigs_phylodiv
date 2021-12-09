@@ -5367,6 +5367,7 @@ df2$grouping <- gsub("_","\n",df2$grouping)
 # re-order dates
 df2$collection_date <- factor(df2$collection_date, 
                            levels=c("t0","t1","t2","t3","t4","t5","t6","t7","t8","t9","t10"))
+
 alpha_plot <- ggplot(df, aes(x=collection_date,y=value)) + 
   ylim(0,0.06)+
   labs(y="alpha diversity - p-value",
@@ -5374,14 +5375,15 @@ alpha_plot <- ggplot(df, aes(x=collection_date,y=value)) +
   theme_bw()+
   geom_point(data=df2,aes(shape=parameter), color="red", size=2)+
   geom_point(aes(shape=parameter), color="black", size=2)+
-  theme(axis.text.x=element_text(size=3),
+  theme(axis.text.x=element_text(size=6),
         axis.text.y=element_text(size=6),
         axis.title.x=element_text(size=8),
         axis.title.y=element_text(size=8),
         legend.position="right",
-        legend.title = element_text(size = 10),
-        legend.text = element_text(size = 9))+
+        legend.title = element_text(size = 8),
+        legend.text = element_text(size = 6))+
   facet_grid(~grouping)+
+  scale_x_discrete(guide=guide_axis(n.dodge=2))+
   geom_hline(yintercept=0.05, linetype="dashed", 
              color = "black", size=0.5)
 # beta 
@@ -5405,14 +5407,15 @@ beta_plot <- ggplot(df, aes(x=collection_date,y=value)) +
   theme_bw()+
   geom_point(data=df2,aes(shape=parameter), color="red", size=2)+
   geom_point(aes(shape=parameter), color="black", size=2)+
-  theme(axis.text.x=element_text(size=3),
+  theme(axis.text.x=element_text(size=6),
         axis.text.y=element_text(size=6),
         axis.title.x=element_text(size=8),
         axis.title.y=element_text(size=8),
         legend.position="right",
-        legend.title = element_text(size = 10),
-        legend.text = element_text(size = 9))+
+        legend.title = element_text(size = 8),
+        legend.text = element_text(size = 6))+
   facet_grid(~grouping)+
+  scale_x_discrete(guide=guide_axis(n.dodge=2))+
   geom_hline(yintercept=0.05, linetype="dashed", 
              color = "black", size=0.5)
 
@@ -5494,9 +5497,6 @@ plot_me <- function(split_df) {
                        axis.title.y=element_text(size=8))+
                  facet_grid(~collection_date, scale="free")))
 }
-
-
-View(df_final)
 
 
 p1<-plot_me(df_final %>% dplyr::filter(id=="set_1")) # 

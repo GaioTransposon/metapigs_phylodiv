@@ -110,3 +110,6 @@ both %>%
   facet_wrap(~metric, scales="free")+
   stat_cor(method = "pearson", r.accuracy = 0.0001, size=3)
 dev.off()
+
+fwrite(x=both, file=paste0(stats_dir,"PD_100K_vs_1M__stats.csv"))
+
